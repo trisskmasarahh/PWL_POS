@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\KatagoriController;
 use App\Http\Controllers\LevelController;
 use Illuminate\Support\Facades\Route;
 
@@ -19,3 +20,4 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get('/level', [LevelController::class, 'index']);
+Route::get('/kategori', [KatagoriController::class, 'index']);
