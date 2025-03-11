@@ -11,47 +11,51 @@ class UserController extends Controller
 { 
     public function index()
     {
-        $user = UserModel::all();
-        return view('user', ['data'=> $user]);
-    }
-    public function tambah()
-    {
-        return view('user_tambah');
-    }
-    public function tambah_simpan(Request $request)
-    {
-        UserModel::create([
-            'username' => $request->username,
-            'nama' => $request->nama,
-            'password' => Hash::make('$request->password'),
-            'level_id'=> $request->level_id
-        ]);
-        return redirect('/user');
-    }
-    public function ubah($id)
-    {
-        $user = UserModel ::find($id);
-        return view('user_ubah', ['data' => $user]);
-    }
+        $user = UserModel::with('level')->get();
+        return view('user', ['data' => $user]);
 
-    public function ubah_simpan($id, Request $request)
-    {
-        $user = UserModel::find($id);
+        // $user = UserModel::with('level')->get();
+        // dd($user);
+        // return view('user', ['data'=> $user]);
+    // }
+    // public function tambah()
+    // {
+    //     return view('user_tambah');
+    // }
+    // public function tambah_simpan(Request $request)
+    // {
+    //     UserModel::create([
+    //         'username' => $request->username,
+    //         'nama' => $request->nama,
+    //         'password' => Hash::make('$request->password'),
+    //         'level_id'=> $request->level_id
+    //     ]);
+    //     return redirect('/user');
+    // }
+    // public function ubah($id)
+    // {
+    //     $user = UserModel ::find($id);
+    //     return view('user_ubah', ['data' => $user]);
+    // }
 
-        $user->username = $request->username;
-        $user->nama= $request->nama;
-        $user->password= Hash::make('$request->password');
-        $user->Level_id = $request->level_id;
+    // public function ubah_simpan($id, Request $request)
+    // {
+    //     $user = UserModel::find($id);
 
-        $user->save();
-        return redirect('/user');
-    }
-    public function hapus($id)
-    {
-        $user = UserModel::find($id);
-        $user->delete();
+    //     $user->username = $request->username;
+    //     $user->nama= $request->nama;
+    //     $user->password= Hash::make('$request->password');
+    //     $user->Level_id = $request->level_id;
 
-        return redirect('/user');
+    //     $user->save();
+    //     return redirect('/user');
+    // }
+    // public function hapus($id)
+    // {
+    //     $user = UserModel::find($id);
+    //     $user->delete();
+
+    //     return redirect('/user');
     }
 }
     
