@@ -40,7 +40,6 @@
                     <th>Username</th>
                     <th>Nama</th>
                     <th>Level</th>
-                    <th>Pengguna</th>
                     <th>Aksi</th>
                 </tr>
             </thead>
@@ -61,9 +60,9 @@
                 ajax: {
                     "url": "{{ url('user/list') }}",
                     "dataType": "json",
-                    "type": "POST",
-                    "data": function (d) {
-                        d.level_id =$('#level_id').val();
+                    "type": "GET",
+                    // "data": function (d) {
+                    //     // d.level_id =$('#level_id').val();
                         // d._token = "{{ csrf_token() }}";
                 },
 
