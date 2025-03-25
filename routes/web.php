@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KatagoriController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\UserController;
@@ -56,3 +57,14 @@ Route::group(['prefix' => 'user'], function () {
     Route::delete('/{id}', [UserController::class, 'destroy']);  // menghapus data user
 
 });
+ // tugas praktikum 
+    Route::group(['prefix' => 'barang'], function(){
+        Route::get('/', [BarangController::class, 'index']);
+        Route::get('/list', [BarangController::class, 'list']);
+        Route::get('/create', [BarangController::class,'create']);
+        Route::post('/', [BarangController::class, 'store']);
+        Route::get('/{id}', [BarangController::class, 'show']);
+        Route::get('/{id}/edit', [BarangController::class, 'edit']);
+        Route::put('/{id}', [BarangController::class, 'update']);
+        Route::delete('/{id}', [BarangController::class, 'destroy']);
+    });
