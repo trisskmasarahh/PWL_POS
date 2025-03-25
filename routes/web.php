@@ -3,8 +3,10 @@
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KatagoriController;
 use App\Http\Controllers\LevelController;
+use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
+use App\Models\KatagoriModel;
 use Illuminate\Support\Facades\Route;
 
 
@@ -68,3 +70,30 @@ Route::group(['prefix' => 'user'], function () {
         Route::put('/{id}', [BarangController::class, 'update']);
         Route::delete('/{id}', [BarangController::class, 'destroy']);
     });
+    //m_level
+    // Routes for Level
+        Route::group(['prefix' => 'level'], function () {
+            Route::get('/', [LevelController::class, 'index']);
+            Route::get('/list', [LevelController::class, 'list']);
+            Route::get('/create', [LevelController::class, 'create']);
+            Route::post('/', [LevelController::class, 'store']); // Menambahkan rute POST
+            Route::get('/{id}/show', [LevelController::class, 'show']);
+        });
+
+        // Routes for Kategori
+        Route::group(['prefix' => 'kategori'], function () {
+            Route::get('/', [KatagoriController::class, 'index']);
+            Route::get('/list', [KatagoriController::class, 'list']);
+            Route::get('/create', [KatagoriController::class, 'create']);
+            Route::post('/', [KatagoriController::class, 'store']); // Sudah ada
+            Route::get('/{id}/show', [KatagoriController::class, 'show']);
+        });
+
+        // Routes for Suplier
+        Route::group(['prefix' => 'suplier'], function () {
+            Route::get('/', [SupplierController::class, 'index']);
+            Route::get('/list', [SupplierController::class, 'list']);
+            Route::get('/create', [SupplierController::class, 'create']);
+            Route::post('/', [SupplierController::class, 'store']); // Menambahkan rute POST
+            Route::get('/{id}/show', [SupplierController::class, 'show']);
+        });

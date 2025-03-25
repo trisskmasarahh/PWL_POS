@@ -2,23 +2,16 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class KatagoriModel extends Model
 {
-    use HasFactory;
+    protected $table = 'm_katagori'; // Nama tabel di database
+    protected $primaryKey = 'katagori_id'; // Primary key tabel
 
-    protected $table = 'm_katagori'; // Pastikan tabelnya sesuai dengan database
-    protected $primaryKey = 'katagori_id';
-    public $timestamps = false;
+    protected $fillable = ['katagori_id', 'katagori_kode', 'katagori_nama'];
 
-    protected $fillable = [
-        'katagori_nama'
-    ];
-
-    // Relasi ke BarangModel
-    public function barangs()
+    public function barang()
     {
         return $this->hasMany(BarangModel::class, 'katagori_id', 'katagori_id');
     }
