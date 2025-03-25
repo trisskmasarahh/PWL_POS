@@ -206,7 +206,58 @@ class UserController extends Controller
             
                 redirect('/');
             }
+            public function edit_ajax(string $id)
+            {
+                $user = UserModel::find($id);
+                $level = LevelModel::select('level_id', 'level_nama')->get();
         
+                return view('users.edit_ajax', ['user' => $user, 'level' => $level]);
+            }
+        
+            public function update_ajax(Request $request, $id)
+            {
+                // Cek apakah request berasal dari AJAX
+                if ($request->ajax() || $request->wantsJson()) {
+                    $rules = [
+                        'level_id' => 'required|integer',
+                        'username' => 'required|max:20|unique:m_user,username,' . $id . ',user_id',
+                        'nama' => 'required|max:100',
+                        'password' => 'nullable|min:6|max:20'
+                    ];
+        
+                    // Validasi input
+                    $validator = Validator::make($request->all(), $rules);
+                    if ($validator->fails()) {
+                        return response()->json([
+                            'status' => false, // Respon JSON, false berarti gagal
+                            'message' => 'Validasi gagal.',
+                            'msgField' => $validator->errors() // Menampilkan field yang error
+                        ]);
+                    }
+        
+                    // Cek apakah user dengan ID tersebut ada
+                    $user = UserModel::find($id);
+                    if ($user) {
+                        // Jika password tidak diisi, hapus dari request agar tidak terupdate
+                        if (!$request->filled('password')) {
+                            $request->request->remove('password');
+                        }
+        
+                        $user->update($request->all());
+                        return response()->json([
+                            'status' => true,
+                            'message' => 'Data berhasil diupdate'
+                        ]);
+                    } else {
+                        return response()->json([
+                            'status' => false,
+                            'message' => 'Data tidak ditemukan'
+                        ]);
+                    }
+                }
+                
+                return redirect('/');
+            }
 }
         // $user = UserModel::with('level')->get();
         // return view('user', ['data' => $user]);
