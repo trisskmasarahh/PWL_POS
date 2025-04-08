@@ -65,6 +65,7 @@
                         </div>
                     </form>
                     </div>
+                    <p class="mt-3 text-center">Belum punya akun? <a href="{{ url('register') }}">Daftar di sini</a></p>
             </div>
         </div>
             <!-- Scripts -->
