@@ -50,7 +50,7 @@ use Illuminate\Support\Facades\Route;
             Route::get('/user/{id}', [UserController::class, 'show']);
 
         });
-        Route::middleware(['auth','authorize:ADM'])->group(function () {
+        Route::middleware(['authorize:ADM,MNG,STF'])->group(function (){
             Route::prefix('level')->group(function () {
                 Route::get('/', [LevelController::class, 'index']);
                 Route::get('/list', [LevelController::class, 'list']);

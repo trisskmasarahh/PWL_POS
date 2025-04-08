@@ -12,10 +12,10 @@ namespace App\Http\Middleware;
         *
         * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
         */
-        public function handle(Request $request, Closure $next, $role = ''): Response
+        public function handle(Request $request, Closure $next, ... $roles): Response
         {
-            $user = $request->user();
-            if ($user->hasRole($role)) {
+            $user_role = $request->user()->getRole();//ambil data level_kode dari user login
+            if (in_array($user_role, $roles)) {//cek apakah level_kode user ada di dalam array roles
                 return $next($request);
                 
             }
