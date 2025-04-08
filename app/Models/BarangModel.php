@@ -13,9 +13,10 @@ class BarangModel extends Model
     protected $primaryKey = 'barang_id';
     public $timestamps = false;
 
-    protected $fillable = [
-        'katagori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual'
-    ];
+    // protected $fillable = [
+    //     'katagori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual'
+    // ];
+    protected $fillable = ['barang_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual', 'stok', 'katagori_id'];
 
     // Relasi ke KatagoriModel
     public function katagori()
