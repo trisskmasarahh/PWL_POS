@@ -1,3 +1,25 @@
+<!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <style>
+        .sidebar {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        }
+    
+        .sidebar-logout {
+        margin-top: auto;
+        
+        }
+    </style>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    </head>
+    <body>
     <div class="sidebar">
 
     <!-- SidebarSearch Form -->
@@ -84,4 +106,17 @@
 
         </ul>
     </nav>
+</div>
+    <!-- Tombol Logout Selalu di Bawah -->
+    <div class="sidebar-logout mt-auto p-3">
+    <a href="{{ url('logout') }}" class="btn btn-danger btn-block"
+        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+        <i class="fas fa-sign-out-alt mr-2"></i> Logout
+    </a>
+    <form id="logout-form" action="{{ url('logout') }}" method="GET" style="display: none;">
+        @csrf
+    </form>
+    </div>
+    </body>
+    </html> 
     </div>
