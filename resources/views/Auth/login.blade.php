@@ -85,7 +85,7 @@
                         rules: {
                         username: {
                             required: true,
-                            minlength: 4,
+                            minlength: 2,
                             maxlength: 20
                     },
                         password: {

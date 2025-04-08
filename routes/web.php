@@ -47,23 +47,27 @@ use Illuminate\Support\Facades\Route;
             Route::get('/{id}/delete_ajax', [UserController::class, 'confirm_ajax']);
             Route::delete('/{id}/delete_ajax', [UserController::class, 'delete_ajax']);
             Route::delete('/{id}', [UserController::class, 'destroy']);
+            Route::get('/user/{id}', [UserController::class, 'show']);
+
         });
-    
-        Route::group(['prefix' => 'level'], function () {
-            Route::get('/', [LevelController::class, 'index']);
-            Route::get('/list', [LevelController::class, 'list']);
-            Route::get('/create', [LevelController::class, 'create']);
-            Route::post('/', [LevelController::class, 'store']);
-            Route::get('/create_ajax', [LevelController::class, 'create_ajax']);
-            Route::post('/ajax', [LevelController::class, 'store_ajax']);
-            Route::get('/{id}/show_ajax', [LevelController::class, 'show']);
-            Route::get('/{id}/edit', [LevelController::class, 'edit']);
-            Route::put('/{id}', [LevelController::class, 'update']);
-            Route::get('/{id}/edit_ajax', [LevelController::class, 'edit_ajax']);
-            Route::put('/{id}/update_ajax', [LevelController::class, 'update_ajax']);
-            Route::get('/{id}/delete_ajax', [LevelController::class, 'confirm_ajax']);
-            Route::delete('/{id}/delete_ajax', [LevelController::class, 'delete_ajax']);
-            Route::delete('/{id}', [LevelController::class, 'destroy']);
+        Route::middleware(['auth','authorize:ADM'])->group(function () {
+            Route::prefix('level')->group(function () {
+                Route::get('/', [LevelController::class, 'index']);
+                Route::get('/list', [LevelController::class, 'list']);
+                Route::get('/create', [LevelController::class, 'create']);
+                Route::post('/', [LevelController::class, 'store']);
+                Route::get('/create_ajax', [LevelController::class, 'create_ajax']);
+                Route::post('/ajax', [LevelController::class, 'store_ajax']);
+                Route::get('/{id}/show_ajax', [LevelController::class, 'show']);
+                Route::get('/{id}/edit', [LevelController::class, 'edit']);
+                Route::put('/{id}', [LevelController::class, 'update']);
+                Route::get('/{id}/edit_ajax', [LevelController::class, 'edit_ajax']);
+                Route::put('/{id}/update_ajax', [LevelController::class, 'update_ajax']);
+                Route::get('/{id}/delete_ajax', [LevelController::class, 'confirm_ajax']);
+                Route::delete('/{id}/delete_ajax', [LevelController::class, 'delete_ajax']);
+                Route::delete('/{id}', [LevelController::class, 'destroy']); 
+            });
+        
         });
         
         Route::group(['prefix' => 'kategori'], function () {
@@ -81,6 +85,8 @@ use Illuminate\Support\Facades\Route;
             Route::get('/{id}/delete_ajax', [KatagoriController::class, 'confirm_ajax']);
             Route::delete('/{id}/delete_ajax', [KatagoriController::class, 'delete_ajax']);
             Route::delete('/{id}', [KatagoriController::class, 'destroy']);
+            Route::get('/user/{id}', [UserController::class, 'show']);
+
         });
         
         Route::group(['prefix' => 'barang'], function () {
@@ -98,6 +104,8 @@ use Illuminate\Support\Facades\Route;
             Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
             Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
             Route::delete('/{id}', [BarangController::class, 'destroy']);
+            Route::get('/user/{id}', [UserController::class, 'show']);
+
         });
         
         Route::group(['prefix' => 'suplier'], function () {
@@ -115,7 +123,10 @@ use Illuminate\Support\Facades\Route;
             Route::get('/{id}/delete_ajax', [SuplierController::class, 'confirm_ajax']);
             Route::delete('/{id}/delete_ajax', [SuplierController::class, 'delete_ajax']);
             Route::delete('/{id}', [SuplierController::class, 'destroy']);
+            Route::get('/user/{id}', [UserController::class, 'show']);
+
         });
+
     });
         // Route::group(['prefix' => 'stok'], function () {
         //     Route::get('/', [StokController::class, 'index']);
