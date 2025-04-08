@@ -59,6 +59,12 @@
                 </a>
             </li>
 
+            <li class="nav-item">
+                <a href="{{ url('/suplier')}}" class="nav-link {{ ($activeMenu == 'suplier') ? 'active' : ''}}">
+                <i class="nav-icon fas fa-box"></i>
+                <p>Suplier </p>
+                </a>
+            </li>
             <!-- Data Transaksi -->
             <li class="nav-header">Data Transaksi</li>
 

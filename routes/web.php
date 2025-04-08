@@ -3,6 +3,7 @@
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KatagoriController;
 use App\Http\Controllers\LevelController;
+use App\Http\Controllers\SuplierController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
@@ -124,11 +125,21 @@ Route::group(['prefix' => 'user'], function () {
 
         // Routes for Suplier
         Route::group(['prefix' => 'suplier'], function () {
-            Route::get('/', [SupplierController::class, 'index']);
-            Route::get('/list', [SupplierController::class, 'list']);
-            Route::get('/create', [SupplierController::class, 'create']);
-            Route::post('/', [SupplierController::class, 'store']); // Menambahkan rute POST
-            Route::get('/{id}/show', [SupplierController::class, 'show']);
+            Route::get('/', [SuplierController::class, 'index']);
+            Route::get('/list', [SuplierController::class, 'list']);
+            Route::get('/create', [SuplierController::class, 'create']);
+            Route::post('/', [SuplierController::class, 'store']); // Menambahkan rute POST
+            Route::get('/create_ajax', [SuplierController::class, 'create_ajax']);
+            Route::post('/ajax', [SuplierController::class, 'store_ajax']);
+            Route::get('/{id}/show_ajax', [SuplierController::class, 'show']);
+            Route::get('/{id}/edit', [SuplierController::class, 'edit']);
+            Route::put('/{id}', [SuplierController::class, 'update']);
+            Route::get('/{id}/edit_ajax', [SuplierController::class, 'edit_ajax']);
+            Route::put('/{id}/update_ajax', [SuplierController::class, 'update_ajax']);
+            Route::get('/{id}/delete_ajax', [SuplierController::class, 'confirm_ajax']);
+            Route::delete('/{id}/delete_ajax', [SuplierController::class, 'delete_ajax']);
+            Route::delete('/{id}', [SuplierController::class, 'destroy']);
+        
         });
 
         // tugas praktikum 6

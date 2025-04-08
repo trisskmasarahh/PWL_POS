@@ -2,12 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SuplierModel;
 use App\Models\SupplierModel;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 
-class SupplierController extends Controller
+class SuplierController extends Controller
 {
     // Menampilkan halaman awal suplier
     public function index()
@@ -60,7 +61,7 @@ class SupplierController extends Controller
             'alamat' => 'required|string|max:200', // Alamat wajib diisi
         ]);
 
-        SupplierModel::create([
+        SuplierModel::create([
             'nama_suplier' => $request->nama_suplier,
             'kontak' => $request->kontak,
             'alamat' => $request->alamat,
@@ -72,7 +73,7 @@ class SupplierController extends Controller
     // Menampilkan detail suplier
     public function show($id)
     {
-        $suplier = SupplierModel::find($id);
+        $suplier = SuplierModel::find($id);
 
         if (!$suplier) {
             return redirect('/suplier')->with('error', 'Suplier tidak ditemukan');
@@ -100,7 +101,7 @@ class SupplierController extends Controller
     // Menampilkan halaman form edit suplier
     public function edit(string $id)
     {
-        $suplier = SupplierModel::find($id);
+        $suplier = SuplierModel::find($id);
 
         $breadcrumb = (object) [
             "title" => "Edit Suplier",
@@ -130,7 +131,7 @@ class SupplierController extends Controller
             'alamat' => 'required|string|max:200', // alamat harus diisi
         ]);
 
-        SupplierModel::find($id)->update([
+        SuplierModel::find($id)->update([
             'nama_suplier' => $request->nama_suplier,
             'kontak' => $request->kontak,
             'alamat' => $request->alamat,
@@ -142,12 +143,12 @@ class SupplierController extends Controller
     // Menghapus data suplier
     public function destroy(string $id)
     {
-        $check = SupplierModel::find($id);
+        $check = SuplierModel::find($id);
         if (!$check) {      //untuk mengecek apakah data suplier yang akan dihapus ada atau tidak
             return redirect('/suplier')->with('error', 'Data suplier tidak ditemukan');
         }
         try {
-            SupplierModel::destroy($id);
+            SuplierModel::destroy($id);
             return redirect('/suplier')->with('success', 'Data suplier berhasil dihapus');
         } catch (\Illuminate\Database\QueryException $e) {
             //jika terjadi error ketika menghapus data, maka tampilkan pesan error dan redirect ke halaman suplier
@@ -179,7 +180,7 @@ class SupplierController extends Controller
                 ]);
             }
 
-            SupplierModel::create($request->all());
+            SuplierModel::create($request->all());
             return response()->json([
                 'status' => true,
                 'message' => 'Data suplier berhasil disimpan'
@@ -191,16 +192,21 @@ class SupplierController extends Controller
     // Ambil data suplier dalam bentuk json untuk datatables
     public function list(Request $request)
     {
-        $suplier = SupplierModel::select('suplier_id', 'nama_suplier', 'kontak', 'alamat');
+        $suplier = SuplierModel::select('id', 'nama_suplier', 'kontak', 'alamat');
 
         return DataTables::of($suplier)
             ->addIndexColumn() // Menambahkan kolom index / no urut (default: DT_RowIndex)
             ->addColumn('aksi', function ($suplier) {
-                $btn = '<a href="' . url('/suplier/' . $suplier->suplier_id . '/show') . '" class="btn btn-info btn-sm">Detail</a> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/suplier/' . $suplier->suplier_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/suplier/' . $suplier->suplier_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
-
-                return $btn;
+                // $btn = '<a href="' . url('/suplier/' . $suplier->suplier_id . '/show') . '" class="btn btn-info btn-sm">Detail</a> ';
+                // $btn .= '<button onclick="modalAction(\'' . url('/suplier/' . $suplier->suplier_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                // $btn .= '<button onclick="modalAction(\'' . url('/suplier/' . $suplier->suplier_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+                    $btn = '<button onclick="modalAction(\'' . url('/suplier/' . $suplier->id .
+                        '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+                    $btn .= '<button onclick="modalAction(\'' . url('/suplier/' . $suplier->id .
+                        '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+                    $btn .= '<button onclick="modalAction(\'' . url('/suplier/' . $suplier->id .
+                        '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+                    return $btn;
             })
             ->rawColumns(['aksi']) // Memberitahu bahwa kolom aksi berisi HTML
             ->make(true);
@@ -209,7 +215,7 @@ class SupplierController extends Controller
     //Menampilkan halaman form edit suplier ajax
     public function edit_ajax(string $id)
     {
-        $suplier = SupplierModel::find($id);
+        $suplier = SuplierModel::find($id);
         return view('suplier.edit_ajax', [
             'suplier' => $suplier
         ]);
@@ -235,7 +241,7 @@ class SupplierController extends Controller
                 ]);
             }
 
-            $check = SupplierModel::find($id);
+            $check = SuplierModel::find($id);
             if ($check) {
                 $check->update($request->all());
                 return response()->json([
@@ -254,7 +260,7 @@ class SupplierController extends Controller
 
     public function confirm_ajax(string $id)
     {
-        $suplier = SupplierModel::find($id);
+        $suplier = SuplierModel::find($id);
         return view('suplier.confirm_ajax', [
             'suplier' => $suplier
         ]);
@@ -263,7 +269,7 @@ class SupplierController extends Controller
     public function delete_ajax(Request $request, $id)
     {
         if ($request->ajax() || $request->wantsJson()) {
-            $suplier = SupplierModel::find($id);
+            $suplier = SuplierModel::find($id);
             if ($suplier) {
                 $suplier->delete();
                 return response()->json([
