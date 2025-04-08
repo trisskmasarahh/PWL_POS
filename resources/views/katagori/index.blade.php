@@ -29,8 +29,7 @@
             </table>
         </div>
     </div>
-    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" data-backdrop="static"
-        data-keyboard="false" data-width="75%" aria-hidden="true"></div>
+    <div id="myModal" class="modal fade animate shake" tabindex="-1" role="dialog" databackdrop="static" data-keyboard="false" data-width="75%" aria-hidden="true"></div>
 @endsection
 
 @push('css')
@@ -43,19 +42,24 @@
                 $('#myModal').modal('show');
             });
         }
+        var datakatagori
         $(document).ready(function() {
             var dataKatagori = $('#table_katagori').DataTable({
                 serverSide: true,
                 ajax: {
                     "url": "{{ url('katagori/list') }}",
-                    "dataType": "json",
+                    // "dataType": "json",
                     "type": "GET"
                 },
                 columns: [{
-                        data: "katagori_id",
-                        className: "text-center",
-                        orderable: true,
-                        searchable: true
+                        data: "DT_RowIndex",
+                            className: "text-center",
+                            orderable: false,
+                            searchable: false
+                        // data: "katagori_id",
+                        // className: "text-center",
+                        // orderable: true,
+                        // searchable: true
                     },
                     {
                         data: "katagori_kode",

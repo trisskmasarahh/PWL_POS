@@ -23,14 +23,35 @@ class KatagoriController extends Controller
 
         $activeMenu = 'katagori';
 
-        $katagori = KatagoriModel::select('katagori_id', 'katagori_kode', 'katagori_nama')->get();
+        // $katagori = KatagoriModel::select('katagori_id', 'katagori_kode', 'katagori_nama')->get();
 
         return view('katagori.index', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'activeMenu' => $activeMenu,
-            'katagori' => $katagori
+            // 'katagori' => $katagori
         ]);
+    }
+
+    public function list(Request $request)
+    {
+        $katagoris = KatagoriModel::select('katagori_id', 'katagori_kode', 'katagori_nama');
+
+        return datatables()->of($katagoris)
+            ->addIndexColumn() // Menambahkan kolom index/DT_RowIndex
+            ->addColumn('aksi', function ($katagori) {
+                $btn = '<button onclick="modalAction(\'' . url('/katagori/' . $katagori->katagori_id .
+                '/show_ajax') . '\')" class="btn btn-info btn-sm">Detail</button> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/katagori/' . $katagori->katagori_id .
+                '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
+            $btn .= '<button onclick="modalAction(\'' . url('/katagori/' . $katagori->katagori_id .
+                '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
+
+            return $btn;
+            })
+
+            ->rawColumns(['aksi']) // Memastikan kolom aksi dianggap sebagai HTML
+            ->make(true);
     }
 
     public function create()
@@ -44,10 +65,49 @@ class KatagoriController extends Controller
             'title' => 'Tambah katagori baru'
         ];
 
-        $katagori = KatagoriModel::all();
+        // $katagori = KatagoriModel::all();
         $activeMenu = 'katagori';
 
         return view('katagori.katagoriCreate', [
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
+            // 'katagori' => $katagori,
+            'activeMenu' => $activeMenu
+        ]);
+    }
+    // Menyimpan data katagori baru
+    public function store(Request $request)
+    {
+        $request->validate([
+            'katagori_kode' => 'required|string|max:10|unique:m_katagori,katagori_kode',
+            'katagori_nama' => 'required|string|max:100'
+        ]);
+
+        KatagoriModel::create([
+            'katagori_kode' => $request->katagori_kode,
+            'katagori_nama' => $request->katagori_nama
+        ]);
+
+        return redirect('/katagori')->with('success', 'Data katagori berhasil disimpan');
+    }
+
+    // Menampilkan detail katagori
+    public function show(string $id)
+    {
+        $katagori = KatagoriModel::find($id);
+
+        $breadcrumb = (object) [
+            'title' => 'Detail Katagori',
+            'list' => ['Home', 'Katagori', 'Detail']
+        ];
+
+        $page = (object) [
+            'title' => 'Detail Katagori'
+        ];
+
+        $activeMenu = 'katagori'; // Set menu yang sedang aktif
+
+        return view('katagori.show', [
             'breadcrumb' => $breadcrumb,
             'page' => $page,
             'katagori' => $katagori,
@@ -55,23 +115,166 @@ class KatagoriController extends Controller
         ]);
     }
 
-    public function list(Request $request)
+    // Menampilkan halaman form edit katagori
+    public function edit(string $id)
     {
-        $katagori = KatagoriModel::select('katagori_id', 'katagori_kode', 'katagori_nama');
+        $katagori = KatagoriModel::find($id);
 
-        if ($request->katagori_id) {
-            $katagori->where('katagori_id', $request->katagori_id);
+        $breadcrumb = (object) [
+            'title' => 'Edit Katagori',
+            'list' => ['Home', 'Katagori', 'Edit']
+        ];
+
+        $page = (object) [
+            'title' => 'Edit Katagori'
+        ];
+
+        $activeMenu = 'katagori'; // Set menu yang sedang aktif
+
+        return view('katagori.edit', [
+            'breadcrumb' => $breadcrumb,
+            'page' => $page,
+            'katagori' => $katagori,
+            'activeMenu' => $activeMenu
+        ]);
+    }
+
+    // Menyimpan perubahan data katagori
+    public function update(Request $request, string $id)
+    {
+        $request->validate([
+            'katagori_kode' => 'required|string|max:10|unique:m_katagori,katagori_kode,' . $id . ',katagori_id',
+            'katagori_nama' => 'required|string|max:100'
+        ]);
+
+        KatagoriModel::find($id)->update([
+            'katagori_kode' => $request->katagori_kode,
+            'katagori_nama' => $request->katagori_nama
+        ]);
+
+        return redirect('/katagori')->with('success', 'Data katagori berhasil diubah');
+    }
+
+    // Menghapus data katagori
+    public function destroy(string $id)
+    {
+        $katagori = KatagoriModel::find($id);
+
+        if (!$katagori) {
+            return redirect('/katagori')->with('error', 'Data katagori tidak ditemukan');
         }
 
-        return DataTables::of($katagori)
-            ->addIndexColumn()
-            ->addColumn('aksi', function ($katagori) {
-                $btn = '<button onclick="modalAction(\'' . url('/katagori/' . $katagori->katagori_id . '/show') . '\')" class="btn btn-info btn-sm">Detail</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/katagori/' . $katagori->katagori_id . '/edit_ajax') . '\')" class="btn btn-warning btn-sm">Edit</button> ';
-                $btn .= '<button onclick="modalAction(\'' . url('/katagori/' . $katagori->katagori_id . '/delete_ajax') . '\')" class="btn btn-danger btn-sm">Hapus</button> ';
-                return $btn;
-            })
-            ->rawColumns(['aksi'])
-            ->make(true);
+        $katagori->delete();
+
+        return redirect('/katagori')->with('success', 'Data katagori berhasil dihapus');
+    }
+
+    public function create_ajax()
+    {
+        return view('katagori.create_ajax');
+    }
+
+    public function store_ajax(Request $request)
+    {
+        // Cek apakah request berupa AJAX
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'katagori_kode' => 'required|string|max:10|unique:m_katagori,katagori_kode',
+                'katagori_nama' => 'required|string|max:100',
+            ];
+
+            // Validasi input
+            $validator = Validator::make($request->all(), $rules);
+
+            // Jika validasi gagal
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, // Status response, false: error/gagal, true: berhasil
+                    'message' => 'Validasi Gagal',
+                    'msgField' => $validator->errors() // Pesan error validasi
+                ]);
+            }
+
+            // Simpan data user
+            KatagoriModel::create($request->all());
+
+            // Response sukses
+            return response()->json([
+                'status' => true,
+                'message' => 'Data katagori berhasil disimpan'
+            ]);
+        }
+
+        // Jika bukan request AJAX, redirect ke halaman utama
+        return redirect('/katagori');
+    }
+
+    public function edit_ajax(String $id)
+    {
+        $katagori = KatagoriModel::find($id);
+
+        return view('katagori.edit_ajax', ['katagori' => $katagori]);
+    }
+
+    public function update_ajax(Request $request, $id)
+    {
+        // cek apakah request dari ajax
+        if ($request->ajax() || $request->wantsJson()) {
+            $rules = [
+                'katagori_kode' => 'required|string|max:10|unique:m_katagori,katagori_kode',
+                'katagori_nama' => 'required|string|max:100',
+            ];
+
+            // validasi
+            $validator = Validator::make($request->all(), $rules);
+            if ($validator->fails()) {
+                return response()->json([
+                    'status' => false, // respon json, true: berhasil, false: gagal
+                    'message' => 'Validasi gagal.',
+                    'msgField' => $validator->errors() // menunjukkan field mana yang error
+                ]);
+            }
+            $check = KatagoriModel::find($id);
+            if ($check) {
+
+                $check->update($request->all());
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data berhasil diupdate'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data tidak ditemukan'
+                ]);
+            }
+        }
+        return redirect('/katagori');
+    }
+
+    public function confirm_ajax(String $id)
+    {
+        $katagori = KatagoriModel::find($id);
+        return view('katagori.confirm_ajax', ['katagori' => $katagori]);
+    }
+
+    public function delete_ajax(Request $request, $id)
+    {
+        if ($request->ajax() || $request->wantsJson()) {
+            $katagori = KatagoriModel::find($id);
+            if ($katagori) {
+                $katagori->delete();
+                return response()->json([
+                    'status' => true,
+                    'message' => 'Data berhasil dihapus'
+                ]);
+            } else {
+                return response()->json([
+                    'status' => false,
+                    'message' => 'Data tidak ditemukan'
+                ]);
+            }
+        }
+        return redirect('/katagori');
     }
 }

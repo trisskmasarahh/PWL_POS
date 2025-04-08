@@ -104,13 +104,23 @@ Route::group(['prefix' => 'user'], function () {
         });
 
         // Routes for Kategori
-        Route::group(['prefix' => 'kategori'], function () {
+        Route::group(['prefix' => 'katagori'], function () {
             Route::get('/', [KatagoriController::class, 'index']);
             Route::get('/list', [KatagoriController::class, 'list']);
             Route::get('/create', [KatagoriController::class, 'create']);
             Route::post('/', [KatagoriController::class, 'store']); // Sudah ada
-            Route::get('/{id}/show', [KatagoriController::class, 'show']);
-        });
+            Route::get('/create_ajax', [KatagoriController::class, 'create_ajax']);
+            Route::post('/ajax', [KatagoriController::class, 'store_ajax']);
+            Route::get('/{id}/show_ajax', [KatagoriController::class, 'show']);
+            Route::get('/{id}/edit', [KatagoriController::class, 'edit']);
+            Route::put('/{id}', [KatagoriController::class, 'update']);
+            Route::get('/{id}/edit_ajax', [KatagoriController::class, 'edit_ajax']);
+            Route::put('/{id}/update_ajax', [KatagoriController::class, 'update_ajax']);
+            Route::get('/{id}/delete_ajax', [KatagoriController::class, 'confirm_ajax']);
+            Route::delete('/{id}/delete_ajax', [KatagoriController::class, 'delete_ajax']);
+            Route::delete('/{id}', [KatagoriController::class, 'destroy']);
+        
+            });
 
         // Routes for Suplier
         Route::group(['prefix' => 'suplier'], function () {
