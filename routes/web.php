@@ -70,8 +70,9 @@ use Illuminate\Support\Facades\Route;
         
         });
         
-        Route::group(['prefix' => 'kategori'], function () {
+        Route::group(['prefix' => 'katagori'], function () {
             Route::get('/', [KatagoriController::class, 'index']);
+            Route::delete('/{id}', [KatagoriController::class, 'destroy']);
             Route::get('/list', [KatagoriController::class, 'list']);
             Route::get('/create', [KatagoriController::class, 'create']);
             Route::post('/', [KatagoriController::class, 'store']);
@@ -85,29 +86,8 @@ use Illuminate\Support\Facades\Route;
             Route::get('/{id}/delete_ajax', [KatagoriController::class, 'confirm_ajax']);
             Route::delete('/{id}/delete_ajax', [KatagoriController::class, 'delete_ajax']);
             Route::delete('/{id}', [KatagoriController::class, 'destroy']);
-            Route::get('/user/{id}', [UserController::class, 'show']);
-
         });
-        
-        Route::group(['prefix' => 'barang'], function () {
-            Route::get('/', [BarangController::class, 'index']);
-            Route::get('/list', [BarangController::class, 'list']);
-            Route::get('/create', [BarangController::class, 'create']);
-            Route::post('/', [BarangController::class, 'store']);
-            Route::get('/create_ajax', [BarangController::class, 'create_ajax']);
-            Route::post('/ajax', [BarangController::class, 'store_ajax']);
-            Route::get('/{id}/show_ajax', [BarangController::class, 'show']);
-            Route::get('/{id}/edit', [BarangController::class, 'edit']);
-            Route::put('/{id}', [BarangController::class, 'update']);
-            Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax']);
-            Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']);
-            Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
-            Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
-            Route::delete('/{id}', [BarangController::class, 'destroy']);
-            Route::get('/user/{id}', [UserController::class, 'show']);
 
-        });
-        
         Route::group(['prefix' => 'suplier'], function () {
             Route::get('/', [SuplierController::class, 'index']);
             Route::get('/list', [SuplierController::class, 'list']);
@@ -123,8 +103,22 @@ use Illuminate\Support\Facades\Route;
             Route::get('/{id}/delete_ajax', [SuplierController::class, 'confirm_ajax']);
             Route::delete('/{id}/delete_ajax', [SuplierController::class, 'delete_ajax']);
             Route::delete('/{id}', [SuplierController::class, 'destroy']);
-            Route::get('/user/{id}', [UserController::class, 'show']);
-
+        });
+        Route::group(['prefix' => 'barang'], function () {
+            Route::get('/', [BarangController::class, 'index']);
+            Route::get('/list', [BarangController::class, 'list']);
+            Route::get('/create', [BarangController::class, 'create']);
+            Route::post('/', [BarangController::class, 'store']);
+            Route::get('/create_ajax', [BarangController::class, 'create_ajax']);
+            Route::post('/ajax', [BarangController::class, 'store_ajax']);
+            Route::get('/{id}/show_ajax', [BarangController::class, 'show']);
+            Route::get('/{id}/edit', [BarangController::class, 'edit']);
+            Route::put('/{id}', [BarangController::class, 'update']);
+            Route::get('/{id}/edit_ajax', [BarangController::class, 'edit_ajax']);
+            Route::put('/{id}/update_ajax', [BarangController::class, 'update_ajax']);
+            Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
+            Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
+            Route::delete('/{id}', [BarangController::class, 'destroy']);
         });
 
     });
