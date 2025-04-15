@@ -5,38 +5,48 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BarangModel;
 use App\Models\KatagoriModel; // Perubahan nama model
+use App\Models\LevelModel;
 use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Validator;
-
+use Illuminate\Support\Facades\Hash;
+use PhpOffice\PhpSpreadsheet\IOFactory;
 
 class BarangController extends Controller
 {
     public function index()
     {
+        $activeMenu = 'barang';
         $breadcrumb = (object) [
-            'title' => 'Daftar Barang',
+            'title' => 'Data Barang',
             'list' => ['Home', 'Barang']
         ];
 
-        $page = (object) [
-            'title' => 'Daftar Barang'
-        ];
-
-        $activeMenu = 'barang'; // Set menu yang sedang aktif
-
+        
+        $katagori = KatagoriModel::select('katagori_id', 
+        'katagori_nama')->get();
         return view('barang.index', [
+            'activeMenu'=>$activeMenu,
             'breadcrumb' => $breadcrumb,
-            'page' => $page,
-            'activeMenu' => $activeMenu
+            'katagori' => $katagori
         ]);
     }
 
     // Mengambil data barang dalam bentuk JSON untuk DataTables
     public function list(Request $request)
     {
-        $barangs = BarangModel::with('katagori')->select('barang_id', 'katagori_id', 'barang_kode', 'barang_nama', 'harga_beli', 'harga_jual'); // Perubahan nama relasi dan kolom
-
-        return dataTables()->of($barangs)
+        $barang = BarangModel::select(
+            'barang_id',
+            'barang_kode',
+            'barang_nama',
+            'harga_beli',
+            'harga_jual',
+            'katagori_id')->with('katagori');
+            
+        $katagori_id = $request->input('filter_katagori');
+        if (!empty($katagori_id)) {
+            $barang->where('katagori_id', $katagori_id);
+        }
+            return dataTables()->of($barang)
             ->addIndexColumn() // Menambahkan kolom index/DT_RowIndex
             ->addColumn('aksi', function ($barang) {
                 $btn = '<button onclick="modalAction(\'' . url('/barang/' . $barang->barang_id .
@@ -186,9 +196,8 @@ class BarangController extends Controller
 
     public function create_ajax()
     {
-        $katagoris = KatagoriModel::select('katagori_id', 'katagori_nama')->get(); // Perubahan nama model dan kolom
-        return view('barang.create_ajax')
-            ->with('katagori', $katagoris); // Perubahan nama variabel
+        $katagori = KatagoriModel::select('katagori_id', 'katagori_nama')->get();
+        return  view('barang.create_ajax')->with('katagori', $katagori);
     }
 
     public function store_ajax(Request $request)
@@ -196,11 +205,12 @@ class BarangController extends Controller
         // Cek apakah request berupa AJAX
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'katagori_id' => 'required|integer', // Perubahan nama kolom
-                'barang_kode' => 'required|string|max:10|unique:m_barang,barang_kode',
-                'barang_nama' => 'required|string|max:100',
-                'harga_beli' => 'required|numeric|min:0',
-                'harga_jual' => 'required|numeric|min:0'
+                'katagori_id' => ['required', 'integer', 'exists:m_katagori,katagori_id'],
+                'barang_kode' => ['required', 'min:3', 'max:20', 'unique:m_barang,barang_kode'],
+                'barang_nama' => ['required', 'string', 'max:100'],
+                'harga_beli' => ['required', 'numeric'],
+                'harga_jual' => ['required', 'numeric'],
+
 
             ];
 
@@ -218,25 +228,19 @@ class BarangController extends Controller
 
             // Simpan data user
             BarangModel::create($request->all());
-
-            // Response sukses
             return response()->json([
                 'status' => true,
-                'message' => 'Data Barang berhasil disimpan'
+                'message' => 'Data berhasil disimpan'
             ]);
         }
 
-        // Jika bukan request AJAX, redirect ke halaman utama
-        return redirect('/barang');
+        redirect('/');
     }
     public function edit_ajax(string $id)
     {
         $barang = BarangModel::find($id);
-        $katagori = KatagoriModel::select('katagori_id', 'katagori_nama')->get(); // Perubahan nama model dan kolom
-        return view('barang.edit_ajax', [
-            'barang' => $barang,
-            'katagori' => $katagori // Perubahan nama variabel
-        ]);
+        $level = LevelModel::select('level_id', 'level_nama')->get();
+        return view('barang.edit_ajax', ['barang' => $barang, 'level' => $level]);
     }
 
     public function update_ajax(Request $request, $id)
@@ -244,12 +248,16 @@ class BarangController extends Controller
         // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
             $rules = [
-                'katagori_id' => 'required|integer', // Perubahan nama kolom
-                // 'barang_kode' => 'required|string|unique:barang,barang_kode',
-                'barang_kode' => 'required|string|unique:barang,barang_kode,' . $id . ',barang_id',
-                'barang_nama' => 'required|string|max:100',
-                'harga_beli' => 'required|numeric|min:0',
-                'harga_jual' => 'required|numeric|min:0'
+                    'katagori_id' => ['required', 'integer', 'exists:m_katagori,katagori_id'],
+                    'barang_kode' => [
+                    'required',
+                    'min:3',
+                    'max:20',
+                    'unique:m_barang,barang_kode,' . $id . ',barang_id'
+                ],
+                    'barang_nama' => ['required', 'string', 'max:100'],
+                    'harga_beli' => ['required', 'numeric'],
+                    'harga_jual' => ['required', 'numeric'],
             ];
 
             // validasi
@@ -278,7 +286,7 @@ class BarangController extends Controller
                 ]);
             }
         }
-        return redirect('/barang');
+        return redirect('/');
     }
 
     public function confirm_ajax(string $id)
@@ -304,6 +312,67 @@ class BarangController extends Controller
                 ]);
             }
         }
-        return redirect('/barang');
+        return redirect('/');
+}
+        public function import()
+        {
+            return view('barang.import');
+        }
+        public function import_ajax(Request $request)
+        {
+            if ($request->ajax() || $request->wantsJson()) {
+                $rules = [
+                    // validasi file harus xlsx, max 1MB 
+                    'file_barang' => ['required', 'mimes:xlsx', 'max:1024']
+                ];
+
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return response()->json([
+                'status' => false,
+                'message' => 'Validasi Gagal',
+                'msgField' => $validator->errors()
+            ]);
+        }
+
+        $file = $request->file('file_barang');  // ambil file dari request  
+        $reader = IOFactory::createReader('Xlsx');  // load reader file excel 
+        $reader->setReadDataOnly(true);             // hanya membaca data 
+        $spreadsheet = $reader->load($file->getRealPath()); // load file excel             
+        $sheet = $spreadsheet->getActiveSheet();    // ambil sheet yang aktif  
+        $data = $sheet->toArray(null, false, true, true);   // ambil data excel 
+
+        $insert = [];
+        if (count($data) > 1) { // jika data lebih dari 1 baris                 
+            foreach ($data as $baris => $value) { 
+                if ($baris > 1) { // baris ke 1 adalah header, maka lewati 
+                    $insert[] = [
+                        'katagori_id' => $value['A'], // diubah dari kategori_id
+                        'barang_kode' => $value['B'],
+                        'barang_nama' => $value['C'],
+                        'harga_beli' => $value['D'],
+                        'harga_jual' => $value['E'],
+                        'created_at' => now(),
+                    ];
+                }
+            }
+            if (count($insert) > 0) {
+                // insert data ke database, jika data sudah ada, maka diabaikan 
+                BarangModel::insertOrIgnore($insert);
+            }
+            return response()->json([
+                'status' => true,
+                'message' => 'Data berhasil diimport'
+            ]);
+        } else {
+            return response()->json([
+                'status' => false,
+                'message' => 'Tidak ada data yang diimport'
+            ]);
+        }
+            
+    }
+        return redirect('/');
+    
     }
 }

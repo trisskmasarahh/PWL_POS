@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BarangController;
 use App\Http\Controllers\KatagoriController;
 use App\Http\Controllers\LevelController;
+use App\Http\Controllers\StokController;
 use App\Http\Controllers\SuplierController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
@@ -69,7 +70,7 @@ use Illuminate\Support\Facades\Route;
                 Route::delete('/{id}', [LevelController::class, 'destroy']); 
             });
         
-        });
+        
         
         Route::group(['prefix' => 'katagori'], function () {
             Route::get('/', [KatagoriController::class, 'index']);
@@ -107,7 +108,7 @@ use Illuminate\Support\Facades\Route;
         });
         Route::group(['prefix' => 'barang'], function () {
             Route::get('/', [BarangController::class, 'index']);
-            Route::get('/list', [BarangController::class, 'list']);
+            Route::post('/list', [BarangController::class, 'list']);
             Route::get('/create', [BarangController::class, 'create']);
             Route::post('/', [BarangController::class, 'store']);
             Route::get('/create_ajax', [BarangController::class, 'create_ajax']);
@@ -120,20 +121,11 @@ use Illuminate\Support\Facades\Route;
             Route::get('/{id}/delete_ajax', [BarangController::class, 'confirm_ajax']);
             Route::delete('/{id}/delete_ajax', [BarangController::class, 'delete_ajax']);
             Route::delete('/{id}', [BarangController::class, 'destroy']);
+            Route::get('/import', [BarangController::class, 'import']);
+            Route::post('/import_ajax', [BarangController::class, 'import_ajax']);
         });
-
     });
-        // Route::group(['prefix' => 'stok'], function () {
-        //     Route::get('/', [StokController::class, 'index']);
-        //     Route::get('/list', [StokController::class, 'list']);
-        //     Route::get('/create', [StokController::class, 'create']);
-        //     Route::post('/', [StokController::class, 'store']);
-        //     Route::get('/{id}', [StokController::class, 'show']);
-        //     Route::get('/{id}/edit', [StokController::class, 'edit']);
-        //     Route::put('/{id}', [StokController::class, 'update']);
-        //     Route::delete('/{id}', [StokController::class, 'destroy']);
-        // });
-    // });
+});
 
 // Route::get('/level', [LevelController::class, 'index']);
 // Route::get('/kategori', [KatagoriController::class, 'index']);
@@ -249,5 +241,5 @@ use Illuminate\Support\Facades\Route;
 //             Route::delete('/{id}/delete_ajax', [SuplierController::class, 'delete_ajax']);
 //             Route::delete('/{id}', [SuplierController::class, 'destroy']);
         
-        // });
+        
     
