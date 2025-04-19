@@ -68,9 +68,9 @@
             <li class="nav-header">Data Barang</li>
 
             <li class="nav-item">
-                <a href="{{ url('/kategori') }}" class="nav-link {{ ($activeMenu == 'kategori') ? 'active' : '' }}">
+                <a href="{{ url('/katagori') }}" class="nav-link {{ ($activeMenu == 'katagori') ? 'active' : '' }}">
                     <i class="nav-icon far fa-bookmark"></i>
-                    <p>Kategori Barang</p>
+                    <p>Katagori Barang</p>
                 </a>
             </li>
 

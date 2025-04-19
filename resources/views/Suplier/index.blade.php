@@ -5,10 +5,9 @@
             <div class="card-header">
                 <h3 class="card-title">{{ $page->title }}</h3>
                 <div class="card-tools">
-                    <a class="btn btn-sm btn-primary mt-1" href="{{ url('suplier/create') }}">Tambah</a>
-                    <button onclick="modalAction('{{ url('suplier/create_ajax') }}')" class="btn btn-sm btn-success mt-1">
-                        Tambah Ajax
-                    </button>
+                    <button onclick="modalAction('{{ url('/suplier/import') }}')" class="btn btn-info">Import Suplier</button>
+                    <a href="{{ url('/suplier/create') }}" class="btn btn-primary ">Tambah Data</a>
+                    <button onclick="modalAction('{{ url('/suplier/create_ajax') }}')" class="btn btn-success">Tambah Data (Ajax)</button>
                 </div>
             </div>
             <div class="card-body">
