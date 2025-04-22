@@ -10,6 +10,7 @@ use Yajra\DataTables\DataTables;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class BarangController extends Controller
 {
@@ -131,6 +132,17 @@ class BarangController extends Controller
             'activeMenu' => $activeMenu
         ]);
     }
+    public function show_ajax(string $id)
+    {
+        $barang = BarangModel::with('katagori')->find($id);
+
+    if (!$barang) {
+        return view('barang.show_ajax'); // Kalau tidak ditemukan
+    }
+
+    return view('barang.show_ajax', compact('barang'));
+
+}
 
     // Menampilkan halaman form edit barang
     public function edit(string $id)
@@ -427,6 +439,21 @@ class BarangController extends Controller
 
     $writer->save('php://output');
     exit;
-}
+    }
+    public function export_pdf()
+    {
+        set_time_limit(1000);
+        $barang = BarangModel::select('katagori_id','barang_kode', 'barang_nama','harga_beli','harga_jual')
+        ->orderBy('katagori_id')
+        ->orderBy('barang_kode')
+        ->with('katagori')
+        ->get();
+        $pdf = pdf::loadView('barang.export_pdf', ['barang'=> $barang]);
+        $pdf->setPaper('A4', 'potrait');
+        $pdf->setOption("isRemoteEnabled", true);
+        $pdf->render();
+
+    return $pdf->stream('Data Barang '.date('Y-m-d H:i:s').'.pdf');
+    }
 
 }

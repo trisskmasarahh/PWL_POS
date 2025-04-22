@@ -319,7 +319,7 @@ class UserController extends Controller
                         foreach ($data as $baris => $value) {
                             if ($baris > 1) { // baris ke 1 adalah header, maka lewati 
                                 $insert[] = [
-                                    'level_id' => $value['A'],
+                                    'user_id' => $value['A'],
                                     'username' => $value['B'],
                                     'nama' => $value['C'],
                                     'password' => $value['D'],
@@ -343,8 +343,8 @@ class UserController extends Controller
                             'message' => 'Tidak ada data yang diimport'
                         ]);
                     }
-                        return redirect('/');
-            }
+                }
+                return redirect('/');
         }
         public function export_excel()
         {
