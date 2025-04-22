@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Illuminate\Support\Facades\Validator;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class SuplierController extends Controller
 {
@@ -343,9 +344,8 @@ class SuplierController extends Controller
                         'message' => 'Tidak ada data yang diimport'
                     ]);
                 }
-    
-                return redirect('/');
             }
+            return redirect('/');
         }
         public function export_excel()
         {
@@ -394,5 +394,18 @@ class SuplierController extends Controller
     
             $writer->save('php://output');
             exit;
+        }
+        public function export_pdf()
+            {
+                set_time_limit(1000);
+            $suplier = SuplierModel::select('id','nama_suplier','kontak', 'alamat')
+                        ->orderBy('id')
+                        ->get();
+            $pdf = PDF::loadview('suplier.export_pdf', ['suplier' => $suplier]);
+            $pdf->setPaper('A4', 'potrait');
+            $pdf->setOption("isRemoteEnabled", true);
+            $pdf->render();
+    
+            return $pdf->stream('Data Suplier '.date('Y-m-d H:i:s').'.pdf');
         }
 }

@@ -8,6 +8,7 @@ use App\Models\LevelModel;
 use Monolog\Level;
 use Yajra\DataTables\Facades\DataTables;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
     class LevelController extends Controller
     {
         // Menampilkan halaman awal level
@@ -215,9 +216,6 @@ use PhpOffice\PhpSpreadsheet\IOFactory;
             }
             return redirect('/');
         }
-
-
-
         public function edit_ajax(String $id)
         {
             $level = LevelModel::find($id);
@@ -345,9 +343,10 @@ public function import_ajax(Request $request)
                 'message' => 'Tidak ada data yang diimport'
             ]);
         }
-            return redirect('/');
-        }
+        
     }
+        return redirect('/');
+}
     public function export_excel()
         {
             $barang = LevelModel::select('level_id','level_kode','level_nama')
@@ -393,5 +392,17 @@ public function import_ajax(Request $request)
     
             $writer->save('php://output');
             exit;
+        }
+        public function export_pdf()
+        {
+            set_time_limit(1000);
+            $level = LevelModel::select('level_id','level_kode','level_nama')
+                        ->orderBy('level_id')
+                        ->get();
+            $pdf = PDF::loadview('level.export_pdf', ['level' => $level]);
+            $pdf->setPaper('A4', 'potrait');
+            $pdf->setOption("isRemoteEnabled", true);
+            $pdf->render();
+            return $pdf->stream('Data Level '.date('Y-m-d H:i:s').'.pdf');
         }
 }

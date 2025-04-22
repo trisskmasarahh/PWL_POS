@@ -8,6 +8,7 @@ namespace App\Http\Controllers;
     use Yajra\DataTables\Facades\DataTables;
     use Illuminate\Support\Facades\Validator;
     use Illuminate\Validation\Rule;
+    use Barryvdh\DomPDF\Facade\Pdf;
 
     class KatagoriController extends Controller
     {
@@ -334,8 +335,9 @@ namespace App\Http\Controllers;
                     'message' => 'Tidak ada data yang diimport'
                 ]);
             }
-                return redirect('/');
+                
             }
+            return redirect('/');
         }
         public function export_excel()
         {
@@ -382,5 +384,18 @@ namespace App\Http\Controllers;
     
             $writer->save('php://output');
             exit;
+        }
+        public function export_pdf()
+        {
+            set_time_limit(1000);
+            $katagori = KatagoriModel::select('katagori_id','katagori_kode','katagori_nama')
+                        ->orderBy('katagori_id')
+                        ->get();
+            $pdf = PDF::loadview('katagori.export_pdf', ['katagori' => $katagori]);
+            $pdf->setPaper('A4', 'potrait');
+            $pdf->setOption("isRemoteEnabled", true);
+            $pdf->render();
+    
+            return $pdf->stream('Data Katagori '.date('Y-m-d H:i:s').'.pdf');
         }
     }

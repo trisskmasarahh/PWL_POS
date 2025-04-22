@@ -9,6 +9,7 @@ use App\Http\Controllers\SuplierController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
+use App\Models\User;
 use App\Models\KatagoriModel;
 use Illuminate\Support\Facades\Route;
 
@@ -53,6 +54,7 @@ use Illuminate\Support\Facades\Route;
             Route::post('/import_ajax', [UserController::class, 'import_ajax']);
             Route::get('/user/{id}', [UserController::class, 'show']);
             Route::get('/export_excel', [UserController::class, 'export_excel']);
+            Route::get('/export_pdf', [UserController::class, 'export_pdf']);
 
         });
         Route::middleware(['authorize:ADM,MNG,STF'])->group(function (){
@@ -74,10 +76,9 @@ use Illuminate\Support\Facades\Route;
                 Route::get('/import', [LevelController::class, 'import']);
                 Route::post('/import_ajax', [LevelController::class, 'import_ajax']);
                 Route::get('/export_excel', [LevelController::class, 'export_excel']);
+                Route::get('/export_pdf', [LevelController::class, 'export_pdf']);
+                
             });
-        
-        
-        
         Route::group(['prefix' => 'katagori'], function () {
             Route::get('/', [KatagoriController::class, 'index']);
             Route::delete('/{id}', [KatagoriController::class, 'destroy']);
@@ -97,6 +98,7 @@ use Illuminate\Support\Facades\Route;
             Route::get('/import', [KatagoriController::class, 'import']);
             Route::post('/import_ajax', [KatagoriController::class, 'import_ajax']);
             Route::get('/export_excel', [KatagoriController::class, 'export_excel']);
+            Route::get('/export_pdf', [KatagoriController::class, 'export_pdf']);
         });
 
         Route::group(['prefix' => 'suplier'], function () {
@@ -117,6 +119,7 @@ use Illuminate\Support\Facades\Route;
             Route::get('/import', [SuplierController::class, 'import']);
             Route::post('/import_ajax', [SuplierController::class, 'import_ajax']);
             Route::get('/export_excel', [SuplierController::class, 'export_excel']);
+            Route::get('/export_pdf', [SuplierController::class, 'export_pdf']);
         });
         Route::group(['prefix' => 'barang'], function () {
             Route::get('/', [BarangController::class, 'index']);

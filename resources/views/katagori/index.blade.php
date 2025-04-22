@@ -7,6 +7,7 @@
             <div class="card-tools">
                 <button onclick="modalAction('{{ url('/katagori/import') }}')" class="btn btn-info">Import Katagori</button>
                 <a href="{{ url('/katagori/export_excel') }}" class="btn btn-primary">Export Katagori</a>
+                <a href="{{ url('/katagori/export_pdf') }}" class="btn btn-warning"><i class="fa fa-file pdf"></i> Export Katagori</a>
                 <button onclick="modalAction('{{ url('/katagori/create_ajax') }}')" class="btn btn-success">Tambah Data (Ajax)</button>
             </div>
         </div>

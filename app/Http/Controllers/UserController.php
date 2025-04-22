@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Hash;
 use Yajra\DataTables\Facades\DataTables;
 use Illuminate\Support\Facades\Validator;
 use PhpOffice\PhpSpreadsheet\IOFactory;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 
 class UserController extends Controller
@@ -38,7 +39,6 @@ class UserController extends Controller
         if ($request->level_id) {
             $users->where('level_id', $request->level_id);
         }
-    
         return DataTables::of($users)
             ->addIndexColumn()
             ->addColumn('aksi', function ($user) {
@@ -54,8 +54,6 @@ class UserController extends Controller
             ->rawColumns(['aksi'])
             ->make(true);
     }
-    
-    
         // Menampilkan halaman form tambah user
         public function create()
         {
@@ -289,7 +287,6 @@ class UserController extends Controller
             {
                 return view('user.import');
             }
-        
             public function import_ajax(Request $request)
             {
                 if ($request->ajax() || $request->wantsJson()) {
@@ -297,7 +294,6 @@ class UserController extends Controller
                         // validasi file harus xls atau xlsx, max 1MB 
                         'file_user' => ['required', 'mimes:xlsx', 'max:1024']
                     ];
-        
                     $validator = Validator::make($request->all(), $rules);
                     if ($validator->fails()) {
                         return response()->json([
@@ -306,14 +302,12 @@ class UserController extends Controller
                             'msgField' => $validator->errors()
                         ]);
                     }
-        
                     $file = $request->file('file_user');  // ambil file dari request  
                     $reader = IOFactory::createReader('Xlsx');  // load reader file excel 
                     $reader->setReadDataOnly(true);             // hanya membaca data 
                     $spreadsheet = $reader->load($file->getRealPath()); // load file excel             
                     $sheet = $spreadsheet->getActiveSheet();    // ambil sheet yang aktif  
                     $data = $sheet->toArray(null, false, true, true);   // ambil data excel 
-        
                     $insert = [];
                     if (count($data) > 1) { // jika data lebih dari 1 baris                 
                         foreach ($data as $baris => $value) {
@@ -327,12 +321,10 @@ class UserController extends Controller
                                 ];
                             }
                         }
-        
                         if (count($insert) > 0) {
                             // insert data ke database, jika data sudah ada, maka diabaikan 
                             UserModel::insertOrIgnore($insert);
                         }
-        
                         return response()->json([
                             'status' => true,
                             'message' => 'Data berhasil diimport'
@@ -393,6 +385,21 @@ class UserController extends Controller
     
             $writer->save('php://output');
             exit;
+        }
+        public function export_pdf()
+        {
+            set_time_limit(1000);
+            $user = UserModel::select('user_id','username','nama','password')
+                        ->orderBy('user_id')
+                        ->orderBy('username')
+                        ->with('level')
+                        ->get();
+            $pdf = PDF::loadview('user.export_pdf', ['user' => $user]);
+            $pdf->setPaper('A4', 'potrait');
+            $pdf->setOption("isRemoteEnabled", true);
+            $pdf->render();
+    
+            return $pdf->stream('Data User '.date('Y-m-d H:i:s').'.pdf');
         }
 }
         // $user = UserModel::with('level')->get();
