@@ -99,6 +99,15 @@ class SuplierController extends Controller
             'activeMenu' => $activeMenu
         ]);
     }
+    public function show_ajax(string $id)
+    {
+         // Mengambil data 
+        $suplier = SuplierModel::find($id);
+         // Return view dalam bentuk popup
+        return view('suplier.show_ajax', [
+            'suplier' => $suplier
+        ]);
+    }
 
     // Menampilkan halaman form edit suplier
     public function edit(string $id)

@@ -42,7 +42,7 @@ class UserController extends Controller
         return DataTables::of($users)
             ->addIndexColumn()
             ->addColumn('aksi', function ($user) {
-                $btn = '<a href="' . url('/user/' . $user->user_id) . '" class="btn btn-info btn-sm">Detail</a> ';
+                $btn = '<a href="' . url('/user/' . $user->user_id.'/show_ajax') . '" class="btn btn-info btn-sm">Detail</a> ';
                 $btn .= '<a href="' . url('/user/' . $user->user_id . '/edit') . '" class="btn btn-warning btn-sm">Edit</a> ';
                 $btn .= '<form class="d-inline-block" method="POST" action="' . url('/user/' . $user->user_id) . '">'
                     . csrf_field()
@@ -53,6 +53,17 @@ class UserController extends Controller
             })
             ->rawColumns(['aksi'])
             ->make(true);
+    }
+    public function show_ajax(string $id)
+{
+     // Mengambil data user berdasarkan ID dengan relasi level
+    $user = UserModel::with('level')->find($id);
+
+     // Return view dalam bentuk popup
+    return view('user.show_ajax', [
+    'user' => $user
+    ]);
+
     }
         // Menampilkan halaman form tambah user
         public function create()
@@ -107,7 +118,7 @@ class UserController extends Controller
 
             $activeMenu = 'user'; // set menu yang sedang aktif
 
-            return view('user.show', ['breadcrumb' => $breadcrumb, 'page' => $page, 'user' => $user, 'activeMenu' => $activeMenu]);
+            return view('user.show_ajax', ['breadcrumb' => $breadcrumb, 'page' => $page, 'user' => $user, 'activeMenu' => $activeMenu]);
         }
         
         // Menampilkan halaman form edit user

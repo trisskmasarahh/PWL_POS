@@ -1,12 +1,12 @@
-@extends('layouts.template')
-
-@section('content')
-    <div class="card card-outline card-primary">
-        <div class="card-header">
-            <h3 class="card-title">{{ $page->title }}</h3>
-            <div class="card-tools"></div>
+<div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h5 class="modal-title">Detail barang</h5>  <!-- Changed from User to barang -->
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
         </div>
-        <div class="card-body">
+        <div class="modal-body">
             <table class="table table-bordered table-striped table-hover table-sm">
                 <tr>
                     <th>ID</th>
@@ -33,7 +33,9 @@
                     <td>{{ $barang->harga_jual }}</td>
                 </tr>
             </table>
-            <a href="{{ url('barang') }}" class="btn btn-default">Kembali</a>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Tutup</button>
         </div>
     </div>
-@endsection
+</div>

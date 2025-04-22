@@ -55,6 +55,16 @@ namespace App\Http\Controllers;
                 ->rawColumns(['aksi']) // Memastikan kolom aksi dianggap sebagai HTML
                 ->make(true);
         }
+        public function show_ajax(string $id)
+     {
+         // Mengambil data 
+         $katagori = KatagoriModel::find($id);
+ 
+         // Return view dalam bentuk popup
+         return view('katagori.show_ajax', [
+             'katagori' => $katagori
+         ]);
+     }
 
         public function create()
         {

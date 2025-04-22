@@ -62,6 +62,16 @@ class BarangController extends Controller
             ->rawColumns(['aksi']) // Memastikan kolom aksi dianggap sebagai HTML
             ->make(true);
     }
+    public function show_ajax(string $id)
+    {
+         // Mengambil data 
+        $barang = BarangModel::with('katagori')->find($id);
+ 
+         // Return view dalam bentuk popup
+        return view('barang.show_ajax', [
+            'barang' => $barang
+         ]);
+    }
 
     // Menampilkan halaman form tambah barang
     public function create()
@@ -111,39 +121,27 @@ class BarangController extends Controller
 
     // Menampilkan detail barang
     public function show(string $id)
-    {
-        $barang = BarangModel::with('katagori')->find($id); // Perubahan nama relasi
-
-        $breadcrumb = (object) [
-            'title' => 'Detail Barang',
-            'list' => ['Home', 'Barang', 'Detail']
-        ];
-
-        $page = (object) [
-            'title' => 'Detail Barang'
-        ];
-
-        $activeMenu = 'barang'; // Set menu yang sedang aktif
-
-        return view('barang.show', [
-            'breadcrumb' => $breadcrumb,
-            'page' => $page,
-            'barang' => $barang,
+     {
+         $barang = BarangModel::with('katagori')->find($id);
+ 
+         $breadcrumb = (object) [
+             'title' => 'Detail Barang',
+             'list' => ['Home', 'Barang', 'Detail']
+         ];
+ 
+         $page = (object) [
+             'title' => 'Detail Barang'
+         ];
+ 
+         $activeMenu = 'barang'; // Set menu yang sedang aktif
+ 
+         return view('barang.show', [
+             'breadcrumb' => $breadcrumb,
+             'page' => $page,
+             'barang' => $barang,
             'activeMenu' => $activeMenu
-        ]);
-    }
-    public function show_ajax(string $id)
-    {
-        $barang = BarangModel::with('katagori')->find($id);
-
-    if (!$barang) {
-        return view('barang.show_ajax'); // Kalau tidak ditemukan
-    }
-
-    return view('barang.show_ajax', compact('barang'));
-
-}
-
+         ]);
+        }
     // Menampilkan halaman form edit barang
     public function edit(string $id)
     {

@@ -50,6 +50,16 @@ use Barryvdh\DomPDF\Facade\Pdf;
         ->rawColumns(['aksi']) // Memberitahu bahwa kolom aksi berisi HTML
                 ->make(true);
         }
+        public function show_ajax(string $id)
+     {
+         // Mengambil data user berdasarkan ID dengan relasi level
+         $level = LevelModel::find($id);
+ 
+         // Return view dalam bentuk popup
+         return view('level.show_ajax', [
+             'level' => $level
+         ]);
+     }
         // Menampilkan halaman form tambah level
         public function create()
         {
@@ -107,7 +117,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 
             $activeMenu = 'level'; // Set menu yang sedang aktif
 
-            return view('level.levelShow', [
+            return view('level.show', [
                 'level' => $level,
                 'breadcrumb' => $breadcrumb,
                 'page' => $page,

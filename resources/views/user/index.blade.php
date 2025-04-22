@@ -1,5 +1,4 @@
 @extends('layouts.template')
-
 @section('content')
 <div class="card card-outline card-primary">
     <div class="card-header">
@@ -72,7 +71,7 @@
                     "dataType": "json",
                     "type": "POST",
                     // "data": function (d) {
-                    //     // d.level_id =$('#level_id').val();
+                    //     d.level_id =$('#level_id').val();
                         // d._token = "{{ csrf_token() }}";
                 },
 

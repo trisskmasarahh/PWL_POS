@@ -3,6 +3,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Models\UserModel;
 use Intervention\Image\Facades\Image;
     
         class ProfileController extends Controller
@@ -29,7 +30,7 @@ use Intervention\Image\Facades\Image;
             $request->validate([
                 'profile_photo' => 'required|image|mimes:jpeg,png,jpg,webp|max:5120',
             ]);
-            $user = auth()->user();
+            $user = UserModel::find(auth()->user()->user_id);
             if (!$user) {
                 return redirect()->route('login')->withErrors('Silakan login terlebih dahulu.');
             }
@@ -48,8 +49,9 @@ use Intervention\Image\Facades\Image;
                 $path = $file->storeAs('public/profile-photos', $fileName);
     
                 // Simpan nama file ke database
-                $user->profile_photo = $fileName;
-                $user->save();
+                $user->update([
+                    'profile_photo' => $fileName
+                ]);
     
                 return back()->with('success', 'Foto profil berhasil diperbarui.');
             } catch (\Exception $e) {
