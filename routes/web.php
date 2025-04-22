@@ -52,6 +52,7 @@ use Illuminate\Support\Facades\Route;
             Route::get('/import', [UserController::class, 'import']);
             Route::post('/import_ajax', [UserController::class, 'import_ajax']);
             Route::get('/user/{id}', [UserController::class, 'show']);
+            Route::get('/export_excel', [UserController::class, 'export_excel']);
 
         });
         Route::middleware(['authorize:ADM,MNG,STF'])->group(function (){
@@ -72,6 +73,7 @@ use Illuminate\Support\Facades\Route;
                 Route::delete('/{id}', [LevelController::class, 'destroy']); 
                 Route::get('/import', [LevelController::class, 'import']);
                 Route::post('/import_ajax', [LevelController::class, 'import_ajax']);
+                Route::get('/export_excel', [LevelController::class, 'export_excel']);
             });
         
         
@@ -94,6 +96,7 @@ use Illuminate\Support\Facades\Route;
             Route::delete('/{id}', [KatagoriController::class, 'destroy']);
             Route::get('/import', [KatagoriController::class, 'import']);
             Route::post('/import_ajax', [KatagoriController::class, 'import_ajax']);
+            Route::get('/export_excel', [KatagoriController::class, 'export_excel']);
         });
 
         Route::group(['prefix' => 'suplier'], function () {
@@ -113,6 +116,7 @@ use Illuminate\Support\Facades\Route;
             Route::delete('/{id}', [SuplierController::class, 'destroy']);
             Route::get('/import', [SuplierController::class, 'import']);
             Route::post('/import_ajax', [SuplierController::class, 'import_ajax']);
+            Route::get('/export_excel', [SuplierController::class, 'export_excel']);
         });
         Route::group(['prefix' => 'barang'], function () {
             Route::get('/', [BarangController::class, 'index']);
