@@ -52,7 +52,7 @@ use Illuminate\Support\Facades\Route;
             Route::delete('/{id}/delete_ajax', [UserController::class, 'delete_ajax']);
             Route::delete('/{id}', [UserController::class, 'destroy']);
             Route::get('/import', [UserController::class, 'import']);
-            // Route::get('/{id}', [UserController::class, 'show']);
+            Route::get('/{id}', [UserController::class, 'show']);
             Route::post('/import_ajax', [UserController::class, 'import_ajax']);
             Route::get('/export_excel', [UserController::class, 'export_excel']);
             Route::get('/export_pdf', [UserController::class, 'export_pdf']);
