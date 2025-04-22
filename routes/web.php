@@ -6,6 +6,7 @@ use App\Http\Controllers\KatagoriController;
 use App\Http\Controllers\LevelController;
 use App\Http\Controllers\StokController;
 use App\Http\Controllers\SuplierController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\WelcomeController;
@@ -77,6 +78,9 @@ use Illuminate\Support\Facades\Route;
                 Route::post('/import_ajax', [LevelController::class, 'import_ajax']);
                 Route::get('/export_excel', [LevelController::class, 'export_excel']);
                 Route::get('/export_pdf', [LevelController::class, 'export_pdf']);
+                Route::post('/profile/upload', [ProfileController::class, 'updateFoto'])
+                ->name('profile.index')
+                ->middleware('auth');
                 
             });
         Route::group(['prefix' => 'katagori'], function () {

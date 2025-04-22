@@ -126,10 +126,122 @@
           <i class="fas fa-expand-arrows-alt"></i>
         </a>
       </li>
-      <li class="nav-item">
-        <a class="nav-link" data-widget="control-sidebar" data-slide="true" href="#" role="button">
-          <i class="fas fa-th-large"></i>
+      <!-- Profile Dropdown Menu -->
+      <li class="nav-item dropdown">
+        <a class="nav-link" data-toggle="dropdown" href="#">
+          <!-- Menampilkan foto profile atau icon default -->
+          <img id="profile-image" src="{{ auth()->user()->profile_photo_path ?? '../../dist/img/default-profile.png' }}" 
+               alt="Profile" class="img-circle" style="width: 30px; height: 30px; object-fit: cover;">
         </a>
-      </li>
-    </ul>
-  </nav>
+        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right">
+          <!-- Bagian header dengan foto profile -->
+          <div class="dropdown-item text-center">
+            <div class="image-container mb-2">
+              <img id="profile-preview" src="{{ auth()->user()->profile_photo_path ?? '../../dist/img/default-profile.png' }}" 
+                  alt="Profile" class="img-circle elevation-2" style="width: 100px; height: 100px; object-fit: cover;">
+              <div class="overlay">
+                <label for="profile-upload" class="upload-label">
+                  <i class="fas fa-camera"></i>
+                </label>
+                <input type="file" id="profile-upload" name="profile_photo" accept="image/*" style="display: none;">
+              </div>
+            </div>
+            <h5 class="mb-0">{{ auth()->user()->name }}</h5>
+            <small>{{ auth()->user()->email }}</small>
+          </div>
+          <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item">
+          <i class="fas fa-user mr-2"></i> Profile
+        </a>
+        <div class="dropdown-divider"></div>
+        <a href="#" class="dropdown-item">
+          <i class="fas fa-cog mr-2"></i> Settings
+        </a>
+        <div class="dropdown-divider"></div>
+         <a href="#" class="dropdown-item" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+           <i class="fas fa-sign-out-alt mr-2"></i> Logout
+         </a>
+         <form id="logout-form" action="{{ url('logout') }}" method="GET" style="display: none;">
+          @csrf
+        </form>
+      </div>
+    </li>
+  </ul>
+</nav>
+
+<!-- CSS untuk overlay upload -->
+<style>
+.image-container {
+  position: relative;
+  display: inline-block;
+}
+.overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  overflow: hidden;
+  width: 100%;
+  height: 30%;
+  transition: .3s ease;
+  border-bottom-left-radius: 50%;
+  border-bottom-right-radius: 50%;
+}
+.upload-label {
+  color: white;
+  font-size: 20px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  cursor: pointer;
+}
+.upload-label:hover {
+  color: #ddd;
+}
+</style>
+
+<!-- JavaScript untuk handle upload foto -->
+<script>
+document.getElementById('profile-upload').addEventListener('change', function(e) {
+  if (e.target.files && e.target.files[0]) {
+    const reader = new FileReader();
+    
+    reader.onload = function(event) {
+      // Update preview image
+      document.getElementById('profile-preview').src = event.target.result;
+      // Update small profile image in navbar
+      document.getElementById('profile-image').src = event.target.result;
+      
+      // Kirim gambar ke server (gunakan AJAX/Fetch)
+      uploadProfilePhoto(e.target.files[0]);
+    };
+    
+    reader.readAsDataURL(e.target.files[0]);
+  }
+});
+
+function uploadProfilePhoto(file) {
+  const formData = new FormData();
+  formData.append('profile_photo', file);
+  formData.append('_token', '{{ csrf_token() }}');
+  
+  fetch('{{ route("profile.index") }}', {
+    method: 'POST',
+    body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.success) {
+      toastr.success('Profile photo updated successfully');
+    } else {
+      toastr.error('Failed to update profile photo');
+    }
+  })
+  .catch(error => {
+    console.error('Error:', error);
+    toastr.error('An error occurred');
+  });
+}
+</script>
