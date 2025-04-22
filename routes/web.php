@@ -131,6 +131,7 @@ use Illuminate\Support\Facades\Route;
             Route::delete('/{id}', [BarangController::class, 'destroy']);
             Route::get('/import', [BarangController::class, 'import']);
             Route::post('/import_ajax', [BarangController::class, 'import_ajax']);
+            Route::get('/export_excel', [BarangController::class, 'export_excel']);
         });
     });
 });
