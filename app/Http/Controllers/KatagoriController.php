@@ -58,11 +58,11 @@ namespace App\Http\Controllers;
         public function show_ajax(string $id)
      {
          // Mengambil data 
-         $katagori = KatagoriModel::find($id);
+        $katagori = KatagoriModel::find($id);
  
          // Return view dalam bentuk popup
-         return view('katagori.show_ajax', [
-             'katagori' => $katagori
+        return view('katagori.show_ajax', [
+            'katagori' => $katagori
          ]);
      }
 

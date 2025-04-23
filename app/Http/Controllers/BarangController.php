@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\Hash;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use Barryvdh\DomPDF\Facade\Pdf;
+use Illuminate\Validation\Rule;
 
 class BarangController extends Controller
 {
@@ -121,26 +122,26 @@ class BarangController extends Controller
 
     // Menampilkan detail barang
     public function show(string $id)
-     {
-         $barang = BarangModel::with('katagori')->find($id);
- 
-         $breadcrumb = (object) [
-             'title' => 'Detail Barang',
-             'list' => ['Home', 'Barang', 'Detail']
-         ];
- 
-         $page = (object) [
-             'title' => 'Detail Barang'
-         ];
- 
-         $activeMenu = 'barang'; // Set menu yang sedang aktif
- 
-         return view('barang.show', [
-             'breadcrumb' => $breadcrumb,
-             'page' => $page,
-             'barang' => $barang,
-            'activeMenu' => $activeMenu
-         ]);
+        {
+            $barang = BarangModel::with('katagori')->find($id);
+    
+            $breadcrumb = (object) [
+                'title' => 'Detail Barang',
+                'list' => ['Home', 'Barang', 'Detail']
+            ];
+    
+            $page = (object) [
+                'title' => 'Detail Barang'
+            ];
+    
+            $activeMenu = 'barang'; // Set menu yang sedang aktif
+    
+            return view('barang.show', [
+                'breadcrumb' => $breadcrumb,
+                'page' => $page,
+                'barang' => $barang,
+                'activeMenu' => $activeMenu
+            ]);
         }
     // Menampilkan halaman form edit barang
     public function edit(string $id)
@@ -257,46 +258,54 @@ class BarangController extends Controller
     {
         // cek apakah request dari ajax
         if ($request->ajax() || $request->wantsJson()) {
+            $check = BarangModel::find($id);
+                if (!$check) {
+                    return response()->json([
+                        'status' => false,
+                        'message' => 'Data tidak ditemukan'
+                    ]);
+                }
             $rules = [
-                    'katagori_id' => ['required', 'integer', 'exists:m_katagori,katagori_id'],
-                    'barang_kode' => [
-                    'required',
-                    'min:3',
-                    'max:20',
-                    'unique:m_barang,barang_kode,' . $id . ',barang_id'
-                ],
+                    // 'katagori_id' => ['required', 'integer', 'exists:m_katagori,katagori_id'],
+                    // 'barang_kode' => ['required','min:3','max:20','unique:m_barang,barang_kode,' . $id . ',barang_id'],
                     'barang_nama' => ['required', 'string', 'max:100'],
                     'harga_beli' => ['required', 'numeric'],
                     'harga_jual' => ['required', 'numeric'],
             ];
 
             // validasi
-            $validator = Validator::make($request->all(), $rules);
+            // $validator = Validator::make($request->all(), $rules);
+            if ($request->barang_kode !== $check->barang_kode) {
+                $rules['barang_kode'] = [
+                    'required',
+                    'min:3',
+                    'max:20',
+                    Rule::unique('m_barang', 'barang_kode')
+                ];
+            } 
+                else {
+                $rules['barang_kode'] = ['required', 'min:3', 'max:20'];
+            }
+
+                $validator = Validator::make($request->all(), $rules);
 
             if ($validator->fails()) {
                 return response()->json([
-                    'status' => false, // respon json, true: berhasil, false: gagal
+                    'status' => false, 
                     'message' => 'Validasi gagal.',
                     'msgField' => $validator->errors() // menunjukkan field mana yang error
                 ]);
             }
-
-            $check = BarangModel::find($id);
-            if ($check) {
-
-                $check->update($request->all());
-                return response()->json([
-                    'status' => true,
-                    'message' => 'Data berhasil diupdate'
-                ]);
-            } else {
-                return response()->json([
-                    'status' => false,
-                    'message' => 'Data tidak ditemukan'
-                ]);
-            }
+            
+            // Update data
+            $check->update($request->all());
+            return response()->json([
+                'status' => true,
+                'message' => 'Data berhasil diupdate'
+            ]);
         }
         return redirect('/');
+        
     }
 
     public function confirm_ajax(string $id)
