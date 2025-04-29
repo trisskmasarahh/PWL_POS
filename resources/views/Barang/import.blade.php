@@ -11,15 +11,15 @@
             <div class="modal-body">
                 <div class="form-group">
                     <label>Download Template</label>
-                    <a href="{{ asset('template_barang.xlsx') }}" class="btn btn-info btnsm" download>
-                        <i class="fa fa-file-excel"></i>Download
+                    <a href="{{ asset('template_barang.xlsx') }}" class="btn btn-info btn-sm" download>
+                        <i class="fa fa-file-excel"></i> Download
                     </a>
-                    <small id="error-katagori_id" class="error-text form-text textdanger"></small> {{-- diganti --}}
+                    <small id="error-kategori_id" class="error-text form-text text-danger"></small>
                 </div>
                 <div class="form-group">
                     <label>Pilih File</label>
-                    <input type="file" name="file_barang" id="file_barang" class="formcontrol" required>
-                    <small id="error-file_barang" class="error-text form-text textdanger"></small>
+                    <input type="file" name="file_barang" id="file_barang" class="form-control" required>
+                    <small id="error-file_barang" class="error-text form-text text-danger"></small>
                 </div>
             </div>
             <div class="modal-footer">
@@ -29,35 +29,39 @@
         </div>
     </div>
 </form>
+<script src="https://cdn.jsdelivr.net/npm/jquery-validation@1.19.5/dist/additional-methods.min.js"></script>
 
 <script>
     $(document).ready(function() {
         $("#form-import").validate({
             rules: {
-                file_barang: { required: true, extension: "xlsx" },
+                file_barang: {
+                    required: true,
+                    extension: "xlsx"
+                }
             },
             submitHandler: function(form) {
                 var formData = new FormData(form); // Jadikan form ke FormData untuk menghandle file
-
+                
                 $.ajax({
                     url: form.action,
                     type: form.method,
                     data: formData, // Data yang dikirim berupa FormData
-                    processData: false,
+                    processData: false, // setting processData dan contentType ke false, untuk menghandle file
                     contentType: false,
                     success: function(response) {
-                        if (response.status) {
+                        if(response.status){ // jika sukses
                             $('#myModal').modal('hide');
                             Swal.fire({
                                 icon: 'success',
                                 title: 'Berhasil',
                                 text: response.message
                             });
-                            tableBarang.ajax.reload();
-                        } else {
+                            tableBarang.ajax.reload(); // reload datatable
+                        } else { // jika error
                             $('.error-text').text('');
                             $.each(response.msgField, function(prefix, val) {
-                                $('#error-' + prefix).text(val[0]); // otomatis akan cari error-katagori_id juga
+                                $('#error-' + prefix).text(val[0]);
                             });
                             Swal.fire({
                                 icon: 'error',
@@ -81,5 +85,5 @@
                 $(element).removeClass('is-invalid');
             }
         });
-    });
+});
 </script>
